@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { User } from 'src/entities/user.entity';
+import { User } from '../../entities/user.entity';
 
 export class CreateUserDto {
   @IsEmail()
@@ -10,7 +10,7 @@ export class CreateUserDto {
 }
 
 export class LoginUserDto extends CreateUserDto {
-  id: number;
+  id?: number;
 }
 
 export class UpdateUserDto extends User {
