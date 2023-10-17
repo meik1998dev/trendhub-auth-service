@@ -1,6 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, LoginUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -14,5 +14,10 @@ export class UserController {
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     return this.userService.register(createUserDto);
+  }
+
+  @Patch('update')
+  async update(@Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(updateUserDto);
   }
 }
