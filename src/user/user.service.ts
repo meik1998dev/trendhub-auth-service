@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/user.dto';
@@ -15,7 +15,7 @@ export class UserService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email });
+    const user = await this.userRepository.findOne({ where: { email } });
 
     if (user && bcrypt.compareSync(password, user.password)) {
       return user;
@@ -25,7 +25,14 @@ export class UserService {
   }
 
   async login(user: LoginUserDto) {
+    const validatedUser = await this.validateUser(user.email, user.password);
+
+    if (!validatedUser) {
+      throw new UnauthorizedException('Invalid email or password.');
+    }
+
     const payload = { email: user.email, id: user.id };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
